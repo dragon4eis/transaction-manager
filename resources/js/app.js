@@ -6,7 +6,13 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+import Vue from 'vue';
+import store from './store/index';
+import router from './routes/index';
+import {toNumber} from './helpers';
+import VueNotifications from 'vue-notifications';
+import iziToast from 'izitoast';
+
 
 /**
  * The following block of code may be used to automatically register your
@@ -27,6 +33,50 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+function toast({title, message, type, timeout}) {
+    if (type === VueNotifications.types.warn) type = 'warning';
+    return iziToast[type]({title, message, timeout})
+}
+
+Vue.use(VueNotifications, {
+    success: toast,
+    error: toast,
+    info: toast,
+    warn: toast
+});
+
 const app = new Vue({
     el: '#app',
+    router,
+    store,
+    notifications: {
+        showSuccessMsg: {
+            type: VueNotifications.types.success,
+            title: 'Success',
+            message: 'That\'s the success!'
+        },
+        showInfoMsg: {
+            type: VueNotifications.types.info,
+            title: 'Info',
+            message: 'Here is some info for you'
+        },
+        showWarnMsg: {
+            type: VueNotifications.types.warn,
+            title: 'Warning',
+            message: 'That\'s the kind of warning'
+        },
+        showErrorMsg: {
+            type: VueNotifications.types.error,
+            title: 'Error',
+            message: 'That\'s the error'
+        }
+    },
+    methods: {
+        showNotification(config) {
+            if (config != null) {
+                config.timeout = config.timeout || 3000;
+                toast(config)
+            }
+        }
+    }
 });
