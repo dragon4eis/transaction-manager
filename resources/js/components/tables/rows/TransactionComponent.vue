@@ -1,11 +1,11 @@
 <template>
     <tr :class="className">
         <th scope="row" v-text="transaction.id"></th>
-        <td v-text="`${account.name}($${account.balance})`"></td>
+        <td v-text="`${transaction.name}($${transaction.balance})`"></td>
         <td v-text="type"></td>
         <td v-text="amount"></td>
         <td>
-            <button class="btn btn-danger" @click="$emit('removeTask',index)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            <button class="btn btn-danger btn-sm" @click="$emit('removeTask',index)"><i class="fa fa-trash" aria-hidden="true"></i></button>
         </td>
     </tr>
 </template>

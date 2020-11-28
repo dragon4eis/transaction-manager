@@ -10,24 +10,41 @@ export default {
     },
     state: {
         formLoading: false,
+        searchString: "",
     },
     mutations: {
-        setElementLoading(state, loading) {
+        SET_ELEMENT_LOADING(state, loading) {
             state.formLoading = loading
         },
+        SET_SEARCH(state, new_search) {
+            state.searchString = new_search
+        }
     },
-    getters: {},
+    getters: {
+        findTransactions: (state) => {
+
+            let cleanString = String(state.searchString).toLowerCase().trim();
+
+            return state.resources.all
+                .filter(transaction => {
+                    return transaction.type_name.includes(cleanString)
+                        || transaction.name.toLowerCase().includes(cleanString)
+                        || transaction.email.toLowerCase().includes(cleanString)
+                        || String(transaction.amount).includes(cleanString)
+                });
+        }
+    },
     actions: {
         submit({state, commit, dispatch}, form) {
             commit('setElementLoading', true);
             let requestType = (form.id) ? "put" : "post";
             let url = `/todoList/${(requestType === "post" ? '' : form.id)}`;
-            return new Promise(((resolve, reject, ) => {
+            return new Promise(((resolve, reject,) => {
                 axios[requestType](url, form)
                     .then(response => {
                         commit('clearErrors');
                         // dispatch('all');
-                        commit(requestType === "post" ? 'addNewResource' : 'updateExistingResource', response.data.resource);
+                        commit(requestType === "post" ? 'ADD_NEW_RESOURCE' : 'UPDATE_EXISTING_RESOURCE', response.data.resource);
                         resolve(response);
                     })
                     .catch(error => {
@@ -55,7 +72,7 @@ export default {
         updateResource({commit}, id) {
             return axios.get(`todoList/${id}`)
                 .then(response => {
-                    commit('updateExistingResource', response.data);
+                    commit('UPDATE_EXISTING_RESOURCE', response.data);
                     return response;
                 })
                 .catch(error => {
