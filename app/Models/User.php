@@ -40,4 +40,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Returns user's account
+     *
+     * @note -  move account to own table for supporting multiple user accounts
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function account(){
+        return $this->hasOne(UserTransactionAccount::class);
+    }
+
+    /**
+     * Return all transactions for user
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function transactions(){
+        return $this->hasManyThrough(Transaction::class, UserTransactionAccount::class);
+    }
 }
