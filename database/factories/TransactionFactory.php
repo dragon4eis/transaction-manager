@@ -22,7 +22,8 @@ class TransactionFactory extends Factory
     public function definition()
     {
         return [
-            'type' => $this->faker->randomKey()
+            'type' => $this->faker->randomKey([Transaction::CREDIT_TRANSACTION, Transaction::DEBIT_TRANSACTION]),
+            'amount' => $this->faker->numberBetween(100, 10000)
         ];
     }
 }

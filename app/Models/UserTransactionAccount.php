@@ -11,23 +11,75 @@ class UserTransactionAccount extends Model
 
     protected $guarded = ['id'];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function transactions(){
-        return $this->hasMany(Transaction::class);
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'account_id');
     }
 
-    public function addCredit(float $credit): ?UserTransactionAccount
+    /**
+     * Adds creating to account
+     *
+     * @param float $credit
+     *
+     * @return $this
+     */
+    public function addCredit(float $credit): UserTransactionAccount
     {
         $this->update(['balance' => $this->getAttribute('balance') + $credit]);
         return $this;
     }
 
-    public function addDebit(float $debit): ?UserTransactionAccount
+    /**
+     * Adds depth to account
+     *
+     * @param float $debit
+     *
+     * @return $this
+     */
+    public function addDebit(float $debit): UserTransactionAccount
     {
         $this->update(['balance' => $this->getAttribute('balance') - $debit]);
         return $this;
+    }
+
+    /**
+     * Updates account balance
+     *
+     * @return UserTransactionAccount
+     */
+    public function refreshBalance(): UserTransactionAccount
+    {
+        $this->update(['balance' => $this->transactions->sum('formatted_amount')]);
+        return $this;
+    }
+
+    /**
+     * Updates the balance without considering is it a credit or debit
+     *
+     * @param float $new_amount
+     *
+     * @return UserTransactionAccount
+     */
+    public function updateBalance(float $new_amount): UserTransactionAccount
+    {
+        $this->update(['balance' => $this->getAttribute('balance') + $new_amount]);
+        return $this;
+    }
+
+    /**
+     * Checks if the debit is more than the current balance
+     *
+     * @param float $debit
+     *
+     * @return bool
+     */
+    public function validateDebit(float $debit): bool
+    {
+        return ($this->getAttribute('balance') - $debit) >= 0;
     }
 }
