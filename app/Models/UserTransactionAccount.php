@@ -11,6 +11,10 @@ class UserTransactionAccount extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'balance' => 'float'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -40,6 +44,7 @@ class UserTransactionAccount extends Model
      * @param float $debit
      *
      * @return $this
+     * @throws \Exception
      */
     public function addDebit(float $debit): UserTransactionAccount
     {
@@ -64,6 +69,7 @@ class UserTransactionAccount extends Model
      * @param float $new_amount
      *
      * @return UserTransactionAccount
+     * @throws \Exception
      */
     public function updateBalance(float $new_amount): UserTransactionAccount
     {
@@ -74,12 +80,12 @@ class UserTransactionAccount extends Model
     /**
      * Checks if the debit is more than the current balance
      *
-     * @param float $debit
+     * @param float $new_amount
      *
      * @return bool
      */
-    public function validateDebit(float $debit): bool
+    public function validateBalance(float $new_amount): bool
     {
-        return ($this->getAttribute('balance') - $debit) >= 0;
+        return ($this->getAttribute('balance') + $new_amount) >= 0;
     }
 }

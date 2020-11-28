@@ -21,6 +21,8 @@ final class TransactionServiceTest extends TestCase
         $transactionList = $this->service->list();
 
         $this->assertSame($allTransactions, count($transactionList));
+
+        $this->assertNotEmpty($transactionList[0]['account']);
     }
 
     public function testCreate()

@@ -47,7 +47,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
                 foreach ($oderBy as $column => $direction)
                     $query->orderBy($column, $direction);
             }, function ($query) {
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('id', 'asc');
             });
     }
 
