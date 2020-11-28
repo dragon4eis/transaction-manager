@@ -12,6 +12,8 @@ class Transaction extends Model
     const CREDIT_TRANSACTION = 1;
     const DEBIT_TRANSACTION = 2;
 
+    protected $fillable = ['amount', 'type', 'account_id'];
+
     public function account(){
         return $this->belongsTo(UserTransactionAccount::class, 'account_id');
     }
