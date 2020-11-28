@@ -21,9 +21,12 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::middleware('auth')->group(function (){
+Route::middleware(['auth'])->group(function (){
     Route::apiResource('transaction', \App\Http\Controllers\TransactionController::class);
 
     Route::get('user', [\App\Http\Controllers\UserController::class, 'index'])->name('user.index');
-    Route::put('user', [\App\Http\Controllers\UserController::class, 'update'])->name('user.update');
+    Route::put('user/{id}', [\App\Http\Controllers\UserController::class, 'update'])->name('user.update');
+
+    Route::get('account', [\App\Http\Controllers\AccountController::class, 'index'])->name('account.index');
+    Route::get('account/{id}', [\App\Http\Controllers\AccountController::class, 'index'])->name('account.show');
 });

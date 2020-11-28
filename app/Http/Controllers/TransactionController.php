@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
-class TransactionController extends Controller
+final class TransactionController extends Controller
 {
     private TransactionServiceInterface $service;
 
@@ -42,11 +42,11 @@ class TransactionController extends Controller
         if($transaction = $this->service->save($request->all())){
             return response()->json(
                     [
-                        'message' => "Transaction for {$transaction->amount} was successfully created",
+                        'message' => "Transaction for {$transaction->formatted_amount} was successfully created",
                         'resource' => new TransactionResource($transaction)
                     ],
                 Response::HTTP_CREATED,
-                ['Location' => route('transaction.show', ['mail' => $transaction->id])]);
+                ['Location' => route('transaction.show', ['transaction' => $transaction->id])]);
         } else {
             return response()->json(['message' => 'Transaction was not saved'], Response::HTTP_BAD_REQUEST);
         }
@@ -94,11 +94,11 @@ class TransactionController extends Controller
             if ($this->service->remove(Arr::wrap($id))) {
                 return response()->json(['message' => "Transaction was successfully removed"], Response::HTTP_OK);
             } else {
-                return response()->json(['message' => 'Mail was not removed'], Response::HTTP_BAD_REQUEST);
+                return response()->json(['message' => 'Transaction was not removed'], Response::HTTP_BAD_REQUEST);
             }
         } catch (\Exception $e) {
             Log::critical($e);
-            return response()->json(['message' => 'Mail not removed, try again later.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Transaction not removed, try again later.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
