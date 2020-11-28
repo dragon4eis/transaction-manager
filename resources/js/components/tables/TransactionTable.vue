@@ -37,7 +37,6 @@ export default {
     computed:{
         loading(){
             return this.$store.state.transactions.resources.isAllLoading
-                ||  this.$store.state.accounts.resources.isAllLoading
         }
     }
 }

@@ -1,44 +1,37 @@
 import axios from 'axios';
 import errors from "../reusable/errors";
 import resources from "../reusable/resources";
+import sort from "../reusable/utils/sort";
+import search from "../reusable/utils/search";
 
 export default {
     namespaced: true,
     modules: {
         errors,
-        resources: resources('/transaction')
+        resources: resources('/transaction'),
+        sort: sort( ['id', 'name']),
+        search: search (['type_name', 'name', 'email', 'amount'])
     },
     state: {
         formLoading: false,
-        searchString: "",
     },
     mutations: {
         SET_ELEMENT_LOADING(state, loading) {
             state.formLoading = loading
         },
-        SET_SEARCH(state, new_search) {
-            state.searchString = new_search
-        }
     },
     getters: {
-        findTransactions: (state) => {
-
-            let cleanString = String(state.searchString).toLowerCase().trim();
-
+        findTransactions: (state, getters) => {
             return state.resources.all
-                .filter(transaction => {
-                    return transaction.type_name.includes(cleanString)
-                        || transaction.name.toLowerCase().includes(cleanString)
-                        || transaction.email.toLowerCase().includes(cleanString)
-                        || String(transaction.amount).includes(cleanString)
-                });
+                .filter(transaction => getters.searchInObject(transaction))
+                .sort((a,b) => getters.sortObjects(a,b));
         }
     },
     actions: {
         submit({state, commit, dispatch}, form) {
-            commit('setElementLoading', true);
+            commit('SET_ELEMENT_LOADING', true);
             let requestType = (form.id) ? "put" : "post";
-            let url = `/todoList/${(requestType === "post" ? '' : form.id)}`;
+            let url = `/transaction/${(requestType === "post" ? '' : form.id)}`;
             return new Promise(((resolve, reject,) => {
                 axios[requestType](url, form)
                     .then(response => {
@@ -55,28 +48,22 @@ export default {
                         reject(error)
                     })
                     .finally(() => {
-                        commit('setElementLoading', false);
+                        commit('SET_ELEMENT_LOADING', false);
                     })
             }))
         },
-        deleteElement({dispatch}, id) {
-            return axios.delete(`/todoList/${id}`)
+        deleteElement({commit, dispatch}, id) {
+            commit('SET_ELEMENT_LOADING', true);
+            return axios.delete(`/transaction/${id}`)
                 .then(response => {
-                    dispatch('all');
+                    // dispatch('all');
+                    commit('REMOVE_RESOURCE', id)
                     return response;
                 })
                 .catch(error => {
-
-                })
-        },
-        updateResource({commit}, id) {
-            return axios.get(`todoList/${id}`)
-                .then(response => {
-                    commit('UPDATE_EXISTING_RESOURCE', response.data);
-                    return response;
-                })
-                .catch(error => {
-                    throw error
+                    return error;
+                }).finally(() => {
+                    commit('SET_ELEMENT_LOADING', false);
                 })
         },
     }

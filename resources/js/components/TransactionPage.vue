@@ -1,30 +1,44 @@
 <template>
     <div class="row">
         <div class="row col-12 mb-3">
-            <div class="col-6">
-                <input v-model="search" class="form-control" placeholder="Search" type="text">
+            <div class="col-3 ">
+                <input v-model="search" :disabled="disableNav"
+                       class="form-control"
+                       placeholder="Search" type="text">
             </div>
-            <div class="col-6">
+            <div class="col-6 offset-3">
                 <div class="btn-group float-right">
-                    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Order
+                    <button :disabled="disableNav" aria-expanded="false"
+                            aria-haspopup="true"
+                            class="btn btn-danger dropdown-toggle" data-toggle="dropdown" type="button">Order
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <span v-for="(sort, index) in sortOptions" :key="index"
+                              :class="{active: active_sort === index}"
+                              class="dropdown-item"
+                              @click="setSorting(index)" v-text="sort.label"></span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row col-12 scrollable">
+        <div class="row col-12 scrollable  mb-3">
             <tr-transaction-table :transactions="filtered_transactions"></tr-transaction-table>
+        </div>
+        <div class="row col-12">
+            <div class="col-6">
+                <button :disabled="disableNav" class="btn btn-primary"
+                        type="button">
+                    <i class="fas fa-pen"></i>
+                    <span>Add new transaction</span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import TrTransactionTable from "./tables/TransactionTable";
+import {mapGetters} from "vuex";
 
 export default {
     name: "tr-transaction-page",
@@ -32,23 +46,34 @@ export default {
         TrTransactionTable
     },
     data() {
-        return {
+        return {}
+    },
+    methods: {
+        setSorting(value) {
+            this.$store.commit('transactions/SET_ACTIVE_SORT', value)
         }
     },
     computed: {
-        search:{
-            get(){
-                return this.$store.state.transactions.searchString
+        ...mapGetters({
+            filtered_transactions: 'transactions/findTransactions',
+            sortOptions: 'transactions/getSortTypes'
+        }),
+        active_sort() {
+            return this.$store.state.transactions.sort.activeSort
+        },
+        search: {
+            get() {
+                return this.$store.state.transactions.search.searchString
             },
-            set(value){
+            set(value) {
                 this.$store.commit('transactions/SET_SEARCH', value)
             }
         },
-        transactions() {
-            return this.$store.state.transactions.resources.all
-        },
         filtered_transactions() {
             return this.$store.getters['transactions/findTransactions']
+        },
+        disableNav() {
+            return this.$store.state.transactions.formLoading
         }
     }
 }

@@ -19,6 +19,12 @@ export default function (urlAddress) {
             ADD_NEW_RESOURCE(state, newResource) {
                 state.all.push(newResource)
             },
+            REMOVE_RESOURCE(state, id) {
+                let index = state.all.findIndex(resource => resource.id === id);
+                if(index){
+                    state.all.splice(index,1)
+                }
+            },
             UPDATE_EXISTING_RESOURCE(state, resource){
                 state.all.forEach((original, index) => {
                     if (resource.id === original.id) {

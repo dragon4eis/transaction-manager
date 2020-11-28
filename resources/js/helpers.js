@@ -9,3 +9,7 @@ export function toNumber(value) {
         ? value
         : number
 }
+
+export function ucFirst(value){
+    return value.charAt(0).toUpperCase() + value.slice(1)
+}

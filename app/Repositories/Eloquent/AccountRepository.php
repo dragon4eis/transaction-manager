@@ -21,4 +21,9 @@ final class AccountRepository extends BaseRepository implements AccountRepositor
         return parent::listResources($search, $filters, $oderBy)
             ->with('user');
     }
+
+    public function find($id): ?Model
+    {
+        return $this->model->with('user')->findOrFail($id);
+    }
 }

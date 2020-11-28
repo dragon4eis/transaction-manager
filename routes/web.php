@@ -28,5 +28,5 @@ Route::middleware(['auth'])->group(function (){
     Route::put('user/{id}', [\App\Http\Controllers\UserController::class, 'update'])->name('user.update');
 
     Route::get('account', [\App\Http\Controllers\AccountController::class, 'index'])->name('account.index');
-    Route::get('account/{id}', [\App\Http\Controllers\AccountController::class, 'index'])->name('account.show');
+    Route::get('account/{id}', [\App\Http\Controllers\AccountController::class, 'show'])->name('account.show');
 });
