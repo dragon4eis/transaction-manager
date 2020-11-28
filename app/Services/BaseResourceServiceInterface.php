@@ -68,5 +68,5 @@ interface BaseResourceServiceInterface
      *
      * @return array
      */
-    public function list(?string $search, ?array $filters, ?array $oderBy): array;
+    public function list(?string $search = "", ?array $filters = [], ?array $oderBy = []): array;
 }
