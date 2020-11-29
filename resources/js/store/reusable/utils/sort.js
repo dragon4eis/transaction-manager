@@ -20,25 +20,38 @@ export default function (sortingFields){
             getSortTypes: (state) => {
                 let $availableSorts = [];
                 if(state.sortingFields.length){
-                    state.sortingFields.forEach(field => {
+                    state.sortingFields.forEach(element => {
                         $availableSorts.push({
-                            label: `${ucFirst(field)} (asc)`,
-                            field,
+                            label: `${ucFirst(element.field)} (asc)`,
+                            field: element.field,
+                            type:   element.type,
                             order: 1
                         });
                         $availableSorts.push({
-                            label: `${ucFirst(field)} (desc)`,
-                            field,
+                            label: `${ucFirst(element.field)} (desc)`,
+                            field: element.field,
+                            type:   element.type,
                             order: -1
                         });
                     })
                 }
                 return $availableSorts;
             },
+            parseOrderValue: (state) => (value1, value2, type) =>{
+                switch (type){
+                    case 'int':
+                    case 'float':
+                       return value1 - value2;
+                    case 'string':
+                        return  value1.localeCompare(value2);
+                    default:
+                        return false
+                }
+            },
             sortObjects: (state, getters) => (objectA, objectB) =>{
                 let sort = getters['getSortTypes'][ state.activeSort] || null;
                 if(sort){
-                    return sort.order * String(objectA[sort.field]).localeCompare(String(objectB[sort.field]))
+                    return sort.order * getters['parseOrderValue'](objectA[sort.field], objectB[sort.field], sort.type)
                 } else {
                     return true;
                 }

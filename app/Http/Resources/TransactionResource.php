@@ -22,7 +22,7 @@ class TransactionResource extends JsonResource
             'account_id' => $this['account_id'],
             'email' => $this['account']['user']['email'],
             'name' => $this['account']['user']['name'],
-            'balance' => $this['account']['user']['name'],
+            'balance' => $this['account']['balance'],
             'type' => $this['type'],
             'amount' => $this['amount'],
             'type_name' => $this['type'] === Transaction::CREDIT_TRANSACTION ? 'credit' : 'debit',

@@ -1,9 +1,15 @@
 <template>
     <tr :class="className">
         <th scope="row" v-text="transaction.id"></th>
-        <td v-text="`${account.name}($${account.balance})`"></td>
-        <td v-text="type"></td>
-        <td v-text="amount"></td>
+        <td class="fixed-width">
+            <user-name-edit :form="account" field="name"></user-name-edit>
+        </td>
+        <td class="fixed-width">
+            <type-edit :form="transaction" field="type"></type-edit>
+        </td>
+        <td class="fixed-width">
+            <amount-edit :form="transaction" field="amount"></amount-edit>
+        </td>
         <td>
             <button class="btn btn-danger btn-sm"
                     :disabled="disableNav"
@@ -13,8 +19,12 @@
 </template>
 
 <script>
+import AmountEdit from "../../forms/edit/AmountEdit";
+import TypeEdit from "../../forms/edit/TypeEdit";
+import UserNameEdit from "../../forms/edit/UserNameEdit";
 export default {
     name: "tr-transaction-component",
+    components: {UserNameEdit, TypeEdit, AmountEdit},
     props: {
         transaction: {
             required: true
@@ -30,14 +40,10 @@ export default {
         account() {
             if(!  this.$store.state.accounts.resources.isAllLoading){
                 let account = this.$store.getters['accounts/getUserName'](this.transaction.account_id);
-                return {balance: account.balance, name: account.user.name} || null
+                return {balance: account.balance, name: account.user.name, id: this.transaction.account_id} || null
             } else {
-                return {balance: this.transaction.balance, name: this.transaction.user} || null
+                return {balance: this.transaction.balance, name: this.transaction.user, id: this.transaction.account_id} || null
             }
-
-        },
-        amount(){
-            return `${this.transaction.type === 1 ?'+' : '-'}$${this.transaction.amount}`
         },
         disableNav(){
             return this.$store.getters['transactions/isFormLoading']
@@ -55,5 +61,7 @@ export default {
 </script>
 
 <style scoped>
-
+    .fixed-width {
+        width: 300px;
+    }
 </style>

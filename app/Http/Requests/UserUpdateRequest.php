@@ -24,7 +24,7 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-           'name' => 'required|unique:users,name,' . $this->get('id')
+           'name' => 'required|min:4|max: 40|unique:users,name,' . $this->get('id')
         ];
     }
 }

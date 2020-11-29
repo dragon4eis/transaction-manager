@@ -51,13 +51,16 @@ export default {
         },
         submit() {
             this.$store.dispatch('transactions/submit', this.form)
-                .then(() => {
+                .then((response) => {
                     this.$store.dispatch('accounts/updateResource', this.form.account_id)
                         .then(() => {
+                            this.$store.commit('transactions/RESET_SORT');
+                            this.$store.commit('transactions/RESET_SEARCH');
                             this.close();
                         })
                 })
                 .catch(error => {
+                    console.error(error);
                     this.$root.showErrorMsg({message: error.response.data.message})
                 })
         }

@@ -1,21 +1,19 @@
 <template>
     <div :class="sizeClass">
         <tr-generic-input :editing="editing" @cancel="$emit('cancel')" @submit="$emit('submit')">
-            <span id="basic-addon1" slot="prepend" class="input-group-text">$</span>
             <input slot="default" v-model="inputValue"
-                   :class="{'is-invalid': $store.getters['transactions/hasError']('amount')}"
-                   :disabled="disabled" aria-label="amount"
+                   :class="{'is-invalid': $store.getters['users/hasError']('name')}"
+                   :disabled="disabled" aria-label="name"
                    class="form-control"
                    min="0"
                    placeholder="Set email subject"
-                   type="number"
-                   @keydown="$store.commit('transactions/clearError','amount')"/>
+                   type="text"
+                   @keydown="$store.commit('users/clearError','name')"/>
         </tr-generic-input>
-        <div v-if="$store.getters['transactions/hasError']('amount')" class="invalid-feedback d-block">
-            <strong v-text="$store.getters['transactions/getError']('amount')"></strong>
+        <div v-if="$store.getters['users/hasError']('name')" class="invalid-feedback d-block">
+            <strong v-text="$store.getters['users/getError']('name')"></strong>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -23,7 +21,7 @@ import TrGenericInput from "./GenericInput";
 import {input_group} from "../../../mixins";
 
 export default {
-    name: "tr-amount-input",
+    name: "tr-name-input",
     components: {TrGenericInput},
     mixins: [input_group]
 }

@@ -1,6 +1,6 @@
 <template>
     <div :class="sizeClass">
-        <tr-generic-input :editing="editing" @cancel="$emit" @submit="$emit">
+        <tr-generic-input :editing="editing" @cancel="$emit('cancel')" @submit="$emit('submit')">
             <select class="form-control custom-select" :disabled="disabled" v-model="inputValue" aria-label="client"
                     :class="{'is-invalid': $store.getters['transactions/hasError']('account_id')}"
                     @keydown="$store.commit('transactions/clearError','account_id')">
