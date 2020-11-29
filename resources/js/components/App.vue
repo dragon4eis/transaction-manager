@@ -1,5 +1,9 @@
 <template>
-    <router-view></router-view>
+    <div>
+        <router-view></router-view>
+        <router-view name="modalView"></router-view>
+    </div>
+
 </template>
 
 <script>

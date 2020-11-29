@@ -3,14 +3,16 @@ import errors from "../reusable/errors";
 import resources from "../reusable/resources";
 import sort from "../reusable/utils/sort";
 import search from "../reusable/utils/search";
+import submit from "../reusable/utils/submit";
 
 export default {
     namespaced: true,
     modules: {
         errors,
         resources: resources('/transaction'),
-        sort: sort( ['id', 'name']),
-        search: search (['type_name', 'name', 'email', 'amount'])
+        sort: sort(['id', 'name']),
+        search: search(['type_name', 'name', 'email', 'amount']),
+        submit: submit('transaction')
     },
     state: {
         formLoading: false,
@@ -24,20 +26,18 @@ export default {
         findTransactions: (state, getters) => {
             return state.resources.all
                 .filter(transaction => getters.searchInObject(transaction))
-                .sort((a,b) => getters.sortObjects(a,b));
+                .sort((a, b) => getters.sortObjects(a, b));
         }
     },
     actions: {
         submit({state, commit, dispatch}, form) {
-            commit('SET_ELEMENT_LOADING', true);
-            let requestType = (form.id) ? "put" : "post";
-            let url = `/transaction/${(requestType === "post" ? '' : form.id)}`;
             return new Promise(((resolve, reject,) => {
-                axios[requestType](url, form)
+                dispatch('submitForm')
                     .then(response => {
                         commit('clearErrors');
-                        // dispatch('all');
                         commit(requestType === "post" ? 'ADD_NEW_RESOURCE' : 'UPDATE_EXISTING_RESOURCE', response.data.resource);
+                        commit('RESET_SORT');
+                        commit('RESET_SEARCH');
                         resolve(response);
                     })
                     .catch(error => {
@@ -46,9 +46,6 @@ export default {
                             commit('addErrors', error.response.data.errors);
                         }
                         reject(error)
-                    })
-                    .finally(() => {
-                        commit('SET_ELEMENT_LOADING', false);
                     })
             }))
         },

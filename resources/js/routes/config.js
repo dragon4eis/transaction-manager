@@ -14,3 +14,17 @@ export function makeRedirect(name) {
         }
     }
 }
+
+export function makeNestedRouterView(name, as = name) {
+    const component = {
+        name,
+        render(h) {
+            return h('router-view', {
+                attrs: {name}
+            })
+        }
+    };
+    return as
+        ? {[as]: component}
+        : component
+}

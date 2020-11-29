@@ -40,7 +40,7 @@ export default {
             return `${this.transaction.type === 1 ?'+' : '-'}$${this.transaction.amount}`
         },
         disableNav(){
-            return this.$store.state.transactions.formLoading
+            return this.$store.getters['transactions/isFormLoading']
         }
     },
     methods:{

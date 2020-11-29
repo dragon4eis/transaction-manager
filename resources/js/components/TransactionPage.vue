@@ -27,6 +27,7 @@
         <div class="row col-12">
             <div class="col-6">
                 <button :disabled="disableNav" class="btn btn-primary"
+                        @click="openSave"
                         type="button">
                     <i class="fas fa-pen"></i>
                     <span>Add new transaction</span>
@@ -51,12 +52,17 @@ export default {
     methods: {
         setSorting(value) {
             this.$store.commit('transactions/SET_ACTIVE_SORT', value)
+        },
+        openSave(){
+            this.$router.push({name: 'transaction-create'})
         }
     },
     computed: {
         ...mapGetters({
             filtered_transactions: 'transactions/findTransactions',
-            sortOptions: 'transactions/getSortTypes'
+            sortOptions: 'transactions/getSortTypes',
+            disableNav: 'transactions/isFormLoading',
+
         }),
         active_sort() {
             return this.$store.state.transactions.sort.activeSort
@@ -69,12 +75,6 @@ export default {
                 this.$store.commit('transactions/SET_SEARCH', value)
             }
         },
-        filtered_transactions() {
-            return this.$store.getters['transactions/findTransactions']
-        },
-        disableNav() {
-            return this.$store.state.transactions.formLoading
-        }
     }
 }
 </script>
